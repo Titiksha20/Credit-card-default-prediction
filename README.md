@@ -233,44 +233,7 @@ High default risk when:
 - Low payment-to-bill ratios (<10%)
 - Multiple red flags (≥3)
 
-## Deployment
 
-### Model Serving
-```python
-import joblib
-import numpy as np
-
-class DefaultPredictor:
-    def __init__(self, model_path, scaler_path, threshold=0.4071):
-        self.model = joblib.load(model_path)
-        self.scaler = joblib.load(scaler_path)
-        self.threshold = threshold
-        
-    def predict(self, features_df):
-        ""Predict default probability and classification""
-        # Scale features
-        features_scaled = self.preprocess(features_df)
-        
-        # Get probability
-        prob = self.model.predict_proba(features_scaled)[:, 1]
-        
-        # Apply threshold
-        prediction = (prob >= self.threshold).astype(int)
-        
-        return {
-            'probability': prob[0],
-            'prediction': 'Default' if prediction[0] else 'No Default',
-            'risk_level': self.get_risk_level(prob[0])
-        }
-    
-    def get_risk_level(self, prob):
-        if prob >= 0.7:
-            return 'High'
-        elif prob >= 0.4:
-            return 'Medium'
-        else:
-            return 'Low'
-```
 
 ## Future Work
 
@@ -278,48 +241,10 @@ class DefaultPredictor:
 - [ ] Deploy as REST API (Flask/FastAPI)
 - [ ] Add real-time monitoring dashboard
 - [ ] Implement temporal validation (walk-forward)
-- [ ] Test on more recent datasets
-- [ ] Add automated retraining pipeline
-- [ ] Integrate with credit scoring systems
 
-## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Citation
-
-If you use this project in your research or work, please cite:
-```
-@misc{credit_default_prediction,
-  author = {Your Name},
-  title = {Credit Card Default Prediction},
-  year = {2025},
-  publisher = {GitHub},
-  url = {https://github.com/yourusername/credit-card-default-prediction}
-}
-```
 
 ## Acknowledgments
 
 - Dataset: UCI Machine Learning Repository
-- Original Paper: Yeh, I. C., & Lien, C. H. (2009). The comparisons of data mining techniques for the predictive accuracy of probability of default of credit card clients. Expert Systems with Applications, 36(2), 2473-2480.
-
-## Contact
-
-Your Name - your.email@example.com
-
-Project Link: https://github.com/yourusername/credit-card-default-prediction
-
----
-
-**Note:** This is an educational project. For production use, ensure compliance with financial regulations and conduct thorough validation on recent data.
